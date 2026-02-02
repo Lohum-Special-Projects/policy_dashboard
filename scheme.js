@@ -65,6 +65,23 @@ function parseDeadline(value) {
     return direct;
   }
 
+  const numericMatch = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})(?:[\/\-.](\d{2,4}))?$/);
+  if (numericMatch) {
+    const day = Number.parseInt(numericMatch[1], 10);
+    const month = Number.parseInt(numericMatch[2], 10) - 1;
+    if (month >= 0 && month <= 11) {
+      let year = numericMatch[3] ? Number.parseInt(numericMatch[3], 10) : new Date().getFullYear();
+      if (year < 100) year += 2000;
+      let date = new Date(year, month, day);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (!numericMatch[3] && date < today) {
+        date = new Date(year + 1, month, day);
+      }
+      return date;
+    }
+  }
+
   const match = raw.match(/^(\d{1,2})[\/\-. ]([A-Za-z]+)(?:[\/\-. ](\d{2,4}))?$/);
   if (!match) return null;
 
