@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Policy Schemes Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="main.js"></script>
+  </head>
+  <body class="page page-home">
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <header class="hero">
+      <div class="hero-text">
+        <p class="kicker">Policy dashboard</p>
+        <h1>Scheme portfolio</h1>
+        <p class="subtitle">Track budgets, applications, and deadlines across active government schemes.</p>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-card">
+          <div class="meta-label">Last updated</div>
+          <div id="last-updated" class="meta-value">--</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">Total schemes</div>
+          <div id="scheme-count" class="meta-value">--</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="table-card">
+        <div class="table-header">
+          <div>Scheme</div>
+          <div>Total budget (INR crores)</div>
+          <div>Lohum applied (INR crores)</div>
+          <div>Deadline</div>
+          <div>Days left</div>
+        </div>
+        <div id="scheme-list" class="table-body">
+          <div class="table-row loading">Loading data...</div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scheme detail</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="scheme.js"></script>
+  </head>
+  <body class="page page-scheme">
+    <div class="bg-orb orb-a"></div>
+    <div class="bg-orb orb-b"></div>
+    <a class="back-link" href="index.html">Back to schemes</a>
+
+    <header class="scheme-hero">
+      <div class="hero-text">
+        <p class="kicker">Scheme detail</p>
+        <h1 id="scheme-title">Loading scheme...</h1>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total budget</div>
+          <div id="total-budget" class="stat-value">--</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Lohum applied</div>
+          <div id="lohum-budget" class="stat-value">--</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Days left</div>
+          <div id="days-left" class="stat-value">--</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content scheme-content">
+      <section class="chart-card">
+        <div class="card-head">
+          <h2>Budget split</h2>
+          <div class="legend">
+            <span class="legend-dot legend-lohum"></span>
+            <span>Lohum share</span>
+            <span class="legend-dot legend-remaining"></span>
+            <span>Remaining</span>
+          </div>
+        </div>
+        <div class="chart-body">
+          <canvas id="budget-chart" width="260" height="260"></canvas>
+          <div class="chart-metrics">
+            <div>
+              <span>Applied share</span>
+              <strong id="lohum-share">--</strong>
+            </div>
+            <div>
+              <span>Remaining</span>
+              <strong id="remaining-share">--</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="progress-card">
+        <div class="card-head">
+          <h2>Progress</h2>
+          <span id="progress-label" class="progress-label">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <div class="deadline-row">
+          <div>
+            <div class="meta-label">Deadline</div>
+            <div id="deadline-text" class="meta-value">--</div>
+          </div>
+          <div id="days-left-pill" class="days-pill">--</div>
+        </div>
+        <div class="stage-row">
+          <span id="stage-1" class="stage-pill"></span>
+          <span id="stage-2" class="stage-pill"></span>
+          <span id="stage-3" class="stage-pill"></span>
+        </div>
+        <div class="status-block">
+          <h3>Current status</h3>
+          <ul id="status-list" class="status-list"></ul>
+        </div>
+      </section>
+
+      <section class="task-board">
+        <div class="task-col">
+          <h3>Pending</h3>
+          <ul id="pending-list"></ul>
+        </div>
+        <div class="task-col">
+          <h3>Ongoing</h3>
+          <ul id="ongoing-list"></ul>
+        </div>
+        <div class="task-col">
+          <h3>Completed</h3>
+          <ul id="completed-list"></ul>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
