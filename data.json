@@ -11,7 +11,7 @@
       "Stage 2": "Eligibility",
       "Stage 3": "Disbursement",
       "Stage 1": "Application",
-      "Days left": "24",
+      "Days left": "",
       "Pending deliverables": "1. Task 1\n2. Task 2",
       "Completed deliverables": "1. Task 16",
       "row_index": 2,
@@ -91,5 +91,5 @@
   "records_start_index": 1,
   "records_end_index": 5,
   "status": "success",
-  "last_modified": "2026-02-03T04:54:05.140289+00:00"
+  "last_modified": "2026-02-03T05:33:39.944670+00:00"
 }
