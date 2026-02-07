@@ -6,6 +6,7 @@
       "Progress": "33%",
       "Scheme": "NCMM Recycling Scheme 2025",
       "Timelines (by when)": "16/02/2026",
+      "Commencement Date": "",
       "Lohum Incentive Size (INR crores)": "\u20b950.00",
       "Ongoing deliverables": "1. Task 11",
       "Stage 2": "Eligibility",
@@ -19,10 +20,11 @@
       "S.No": "1"
     },
     {
-      "Status": "1. Stage 1 complete\n2. Advocacy ongoing",
+      "Status": "1. Application submitted, acknowledgement pending \n2. Advocacy ongoing",
       "Progress": "45%",
       "Scheme": "Electronics Component Manufacturing Scheme - REE",
       "Timelines (by when)": "01/03/2026",
+      "Commencement Date": "",
       "Lohum Incentive Size (INR crores)": "\u20b9175.00",
       "Ongoing deliverables": "1. Task 12",
       "Stage 2": "Eligibility",
@@ -39,7 +41,8 @@
       "Status": "1. Stage 1 complete\n2. Advocacy ongoing",
       "Progress": "25%",
       "Scheme": "UP FCI",
-      "Timelines (by when)": "18/02/2026",
+      "Timelines (by when)": "20/03/2026",
+      "Commencement Date": "",
       "Lohum Incentive Size (INR crores)": "\u20b9300.00",
       "Ongoing deliverables": "1. Task 13",
       "Stage 2": "Eligibility",
@@ -57,6 +60,7 @@
       "Progress": "60%",
       "Scheme": "UP Center of Excellence",
       "Timelines (by when)": "19/02/2026",
+      "Commencement Date": "",
       "Lohum Incentive Size (INR crores)": "\u20b9425.00",
       "Ongoing deliverables": "1. Task 14",
       "Stage 2": "Eligibility",
@@ -74,6 +78,7 @@
       "Progress": "20%",
       "Scheme": "RDIF - TDB",
       "Timelines (by when)": "20/02/2026",
+      "Commencement Date": "",
       "Lohum Incentive Size (INR crores)": "\u20b9520.00",
       "Ongoing deliverables": "1. Task 15",
       "Stage 2": "Eligibility",
@@ -91,5 +96,5 @@
   "records_start_index": 1,
   "records_end_index": 5,
   "status": "success",
-  "last_modified": "2026-02-07T08:42:00.937270+00:00"
+  "last_modified": "2026-02-07T09:38:59.607063+00:00"
 }
