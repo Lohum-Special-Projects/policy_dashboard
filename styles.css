@@ -621,6 +621,19 @@ a {
 
 .task-board {
   grid-column: 1 / -1;
+}
+
+.task-board-card {
+  background: var(--surface-strong);
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(15, 31, 27, 0.08);
+  display: grid;
+  gap: 16px;
+}
+
+.task-board-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
@@ -737,7 +750,7 @@ a {
     grid-template-columns: 1fr;
   }
 
-  .task-board {
+  .task-board-grid {
     grid-template-columns: 1fr;
   }
 
