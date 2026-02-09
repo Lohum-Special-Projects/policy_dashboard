@@ -1,6 +1,7 @@
 const listEl = document.getElementById("scheme-list");
 const lastUpdatedEl = document.getElementById("last-updated");
 const schemeCountEl = document.getElementById("scheme-count");
+const totalIncentiveEl = document.getElementById("total-incentive");
 
 const monthMap = {
   jan: 0,
@@ -28,8 +29,8 @@ function parseMoney(value) {
 
 function formatCrores(value) {
   const formatter = new Intl.NumberFormat("en-IN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   });
   return formatter.format(value);
 }
@@ -120,6 +121,31 @@ function formatDaysLeft(daysLeft) {
   return `${daysLeft} days`;
 }
 
+function parseList(value) {
+  if (!value) return [];
+  return String(value)
+    .split(/\n+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map((item) => item.replace(/^\d+\.\s*/, ""));
+}
+
+function renderDetailList(listEl, items, emptyText) {
+  listEl.innerHTML = "";
+  if (!items.length) {
+    const li = document.createElement("li");
+    li.className = "empty";
+    li.textContent = emptyText;
+    listEl.appendChild(li);
+    return;
+  }
+  items.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    listEl.appendChild(li);
+  });
+}
+
 function createCell(label, className) {
   const cell = document.createElement("div");
   cell.className = className ? `cell ${className}` : "cell";
@@ -128,12 +154,16 @@ function createCell(label, className) {
 }
 
 function buildRow(record, index) {
+  const entry = document.createElement("div");
+  entry.className = "table-entry";
+
   const row = document.createElement("div");
   row.className = "table-row";
   row.style.animationDelay = `${index * 70}ms`;
 
   const schemeName = record.Scheme || "Untitled scheme";
   const rowId = record.row_index ?? record["S.No"] ?? String(index + 1);
+  const detailsId = `details-${rowId}-${index}`;
 
   const schemeCell = createCell("Scheme", "scheme-cell");
   const link = document.createElement("a");
@@ -154,13 +184,21 @@ function buildRow(record, index) {
     schemeCell.appendChild(stageLine);
   }
 
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "row-toggle";
+  toggleBtn.textContent = "View pending details";
+  toggleBtn.setAttribute("aria-expanded", "false");
+  toggleBtn.setAttribute("aria-controls", detailsId);
+  schemeCell.appendChild(toggleBtn);
+
   const totalBudget = parseMoney(record["Government Budget (INR crores)"]);
   const lohumBudget = parseMoney(record["Lohum Incentive Size (INR crores)"]);
 
-  const totalCell = createCell("Total budget (INR crores)");
+  const totalCell = createCell("Government Budget (INR crores)");
   totalCell.textContent = formatCrores(totalBudget);
 
-  const lohumCell = createCell("Lohum applied (INR crores)");
+  const lohumCell = createCell("Lohum Incentive Size (INR crores)");
   lohumCell.textContent = formatCrores(lohumBudget);
 
   const deadlineRaw = record["Timelines (by when)"];
@@ -186,7 +224,54 @@ function buildRow(record, index) {
   row.appendChild(deadlineCell);
   row.appendChild(daysCell);
 
-  return row;
+  const details = document.createElement("div");
+  details.className = "row-details";
+  details.id = detailsId;
+  details.hidden = true;
+
+  const detailsGrid = document.createElement("div");
+  detailsGrid.className = "details-grid";
+
+  const pendingBlock = document.createElement("div");
+  const pendingLabel = document.createElement("div");
+  pendingLabel.className = "details-label";
+  pendingLabel.textContent = "Pending deliverables";
+  const pendingList = document.createElement("ul");
+  pendingList.className = "details-list";
+  renderDetailList(pendingList, parseList(record["Pending deliverables"]), "None");
+  pendingBlock.appendChild(pendingLabel);
+  pendingBlock.appendChild(pendingList);
+
+  const statusBlock = document.createElement("div");
+  const statusLabel = document.createElement("div");
+  statusLabel.className = "details-label";
+  statusLabel.textContent = "Where pending";
+  const statusList = document.createElement("ul");
+  statusList.className = "details-list";
+  const statusLines = parseList(record.Status);
+  const pendingWhere =
+    statusLines.length
+      ? statusLines
+      : stageParts.map((part, idx) => `Stage ${idx + 1}: ${part}`);
+  renderDetailList(statusList, pendingWhere, "Not specified");
+  statusBlock.appendChild(statusLabel);
+  statusBlock.appendChild(statusList);
+
+  detailsGrid.appendChild(pendingBlock);
+  detailsGrid.appendChild(statusBlock);
+  details.appendChild(detailsGrid);
+
+  toggleBtn.addEventListener("click", () => {
+    const isOpen = !details.hidden;
+    details.hidden = isOpen;
+    toggleBtn.setAttribute("aria-expanded", String(!isOpen));
+    toggleBtn.textContent = isOpen ? "View pending details" : "Hide pending details";
+  });
+
+  entry.appendChild(row);
+  entry.appendChild(details);
+
+  return entry;
 }
 
 function renderDashboard(data) {
@@ -194,6 +279,11 @@ function renderDashboard(data) {
 
   const records = Array.isArray(data.records) ? data.records : [];
   schemeCountEl.textContent = records.length ? String(records.length) : "0";
+  const totalIncentive = records.reduce(
+    (sum, record) => sum + parseMoney(record["Lohum Incentive Size (INR crores)"]),
+    0,
+  );
+  totalIncentiveEl.textContent = records.length ? formatCrores(totalIncentive) : "0";
 
   const lastUpdated = data.last_modified ? new Date(data.last_modified) : null;
   if (lastUpdated && !Number.isNaN(lastUpdated.getTime())) {
@@ -235,5 +325,6 @@ fetch("data.json", { cache: "no-store" })
     listEl.appendChild(errorRow);
     lastUpdatedEl.textContent = "Unavailable";
     schemeCountEl.textContent = "0";
+    totalIncentiveEl.textContent = "0";
     console.error(error);
   });

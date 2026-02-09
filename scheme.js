@@ -49,8 +49,8 @@ function parseMoney(value) {
 
 function formatCrores(value) {
   const formatter = new Intl.NumberFormat("en-IN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   });
   return formatter.format(value);
 }
@@ -179,7 +179,7 @@ function drawPieChart(canvas, lohum, total) {
   const remainingValue = Math.max(totalValue - lohumValue, 0);
   const lohumAngle = totalValue > 0 ? (lohumValue / totalValue) * Math.PI * 2 : 0;
 
-  ctx.fillStyle = "#dfd1c6";
+  ctx.fillStyle = "#e3d7c7";
   ctx.beginPath();
   ctx.moveTo(center, center);
   ctx.arc(center, center, radius, 0, Math.PI * 2);
@@ -187,7 +187,7 @@ function drawPieChart(canvas, lohum, total) {
   ctx.fill();
 
   if (lohumAngle > 0) {
-    ctx.fillStyle = "#1f5f5b";
+    ctx.fillStyle = "#2f7b63";
     ctx.beginPath();
     ctx.moveTo(center, center);
     ctx.arc(center, center, radius, -Math.PI / 2, -Math.PI / 2 + lohumAngle);
@@ -202,13 +202,13 @@ function drawPieChart(canvas, lohum, total) {
   ctx.fill();
 
   const share = totalValue > 0 ? Math.round((lohumValue / totalValue) * 100) : 0;
-  ctx.fillStyle = "#1b1b1d";
-  ctx.font = '600 24px "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", Verdana, sans-serif';
+  ctx.fillStyle = "#0f1f1b";
+  ctx.font = '600 24px "Montserrat", "Segoe UI", Arial, sans-serif';
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(`${share}%`, center, center - 4);
-  ctx.fillStyle = "#6d6c73";
-  ctx.font = '12px "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", Verdana, sans-serif';
+  ctx.fillStyle = "#55665d";
+  ctx.font = '12px "Montserrat", "Segoe UI", Arial, sans-serif';
   ctx.fillText("Lohum share", center, center + 16);
 
   return { lohumValue, remainingValue };
@@ -263,7 +263,7 @@ function renderScheme(record) {
   renderList(completedListEl, completed);
 
   const { remainingValue } = drawPieChart(chartCanvas, lohumBudget, totalBudget);
-  const sharePercent = totalBudget > 0 ? ((lohumBudget / totalBudget) * 100).toFixed(1) : "0.0";
+  const sharePercent = totalBudget > 0 ? ((lohumBudget / totalBudget) * 100).toFixed(0) : "0";
   lohumShareEl.textContent = `${sharePercent}%`;
   remainingShareEl.textContent = `${formatCrores(remainingValue)} INR`;
 }

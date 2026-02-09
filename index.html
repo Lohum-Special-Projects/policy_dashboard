@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Policy Schemes Dashboard</title>
+    <title>Policy Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <script defer src="main.js"></script>
   </head>
@@ -12,18 +12,24 @@
     <div class="bg-orb orb-b"></div>
     <header class="hero">
       <div class="hero-text">
-        <p class="kicker">Policy dashboard</p>
-        <h1>Scheme portfolio</h1>
-        <p class="subtitle">Track budgets, applications, and deadlines across active government schemes.</p>
+        <div class="brand">
+          <img class="brand-logo" src="image/lohum_logo.svg" alt="Lohum logo">
+          <h1>Policy Dashboard</h1>
+        </div>
+        <p class="subtitle">Track application across active government schemes</p>
+      </div>
+      <div class="meta-chip">
+        <span class="meta-label">Last updated</span>
+        <span id="last-updated" class="meta-value">--</span>
       </div>
       <div class="hero-meta">
         <div class="meta-card">
-          <div class="meta-label">Last updated</div>
-          <div id="last-updated" class="meta-value">--</div>
+          <div class="meta-label">Number of Applicable Schemes</div>
+          <div id="scheme-count" class="meta-value">--</div>
         </div>
         <div class="meta-card">
-          <div class="meta-label">Total schemes</div>
-          <div id="scheme-count" class="meta-value">--</div>
+          <div class="meta-label">Total Incentive Pool (INR crores)</div>
+          <div id="total-incentive" class="meta-value">--</div>
         </div>
       </div>
     </header>
@@ -32,8 +38,8 @@
       <section class="table-card">
         <div class="table-header">
           <div>Scheme</div>
-          <div>Total budget (INR crores)</div>
-          <div>Lohum applied (INR crores)</div>
+          <div>Government Budget (INR crores)</div>
+          <div>Lohum Incentive Size (INR crores)</div>
           <div>Deadline</div>
           <div>Days left</div>
         </div>
