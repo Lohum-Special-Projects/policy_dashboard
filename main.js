@@ -176,18 +176,6 @@ function buildRow(record, index) {
   link.href = `scheme.html?row=${encodeURIComponent(rowId)}`;
   schemeCell.appendChild(link);
 
-  const stageParts = [
-    record["Stage 1"],
-    record["Stage 2"],
-    record["Stage 3"],
-  ].filter(Boolean);
-  if (stageParts.length) {
-    const stageLine = document.createElement("div");
-    stageLine.className = "scheme-stage";
-    stageLine.textContent = stageParts.join(" -> ");
-    schemeCell.appendChild(stageLine);
-  }
-
   const toggleBtn = document.createElement("button");
   toggleBtn.type = "button";
   toggleBtn.className = "row-toggle";
@@ -276,7 +264,7 @@ function buildRow(record, index) {
   const pendingWhere =
     statusLines.length
       ? statusLines
-      : stageParts.map((part, idx) => `Stage ${idx + 1}: ${part}`);
+      : [];
   renderDetailList(statusList, pendingWhere, "Not specified");
   statusBlock.appendChild(statusLabel);
   statusBlock.appendChild(statusList);

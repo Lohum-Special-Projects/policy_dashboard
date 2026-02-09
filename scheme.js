@@ -2,7 +2,6 @@ const schemeTitleEl = document.getElementById("scheme-title");
 const daysLeftEl = document.getElementById("days-left");
 const deadlineTextEl = document.getElementById("deadline-text");
 const daysLeftPillEl = document.getElementById("days-left-pill");
-const progressLabelEl = document.getElementById("progress-label");
 const progressFillEl = document.getElementById("progress-fill");
 const timelineProgressEl = document.getElementById("timeline-progress");
 const commencementDateEl = document.getElementById("commencement-date");
@@ -284,14 +283,6 @@ function renderScheme(record) {
   const nextMilestone = nextData ? nextData.milestone : null;
   const previousMilestone =
     nextData && nextData.index > 0 ? milestones[nextData.index - 1] : milestones[0];
-
-  if (nextMilestone) {
-    progressLabelEl.textContent = `Next deadline: ${nextMilestone.label} · ${formatDeadline(
-      nextMilestone.date,
-    )}`;
-  } else {
-    progressLabelEl.textContent = "Next deadline: --";
-  }
 
   const segmentProgress = nextMilestone
     ? getSegmentProgress(today, previousMilestone?.date, nextMilestone.date)
