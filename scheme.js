@@ -1,12 +1,16 @@
 const schemeTitleEl = document.getElementById("scheme-title");
-const totalBudgetEl = document.getElementById("total-budget");
-const lohumBudgetEl = document.getElementById("lohum-budget");
 const daysLeftEl = document.getElementById("days-left");
 const deadlineTextEl = document.getElementById("deadline-text");
 const daysLeftPillEl = document.getElementById("days-left-pill");
 const progressLabelEl = document.getElementById("progress-label");
 const progressFillEl = document.getElementById("progress-fill");
+const timelineProgressEl = document.getElementById("timeline-progress");
+const commencementDateEl = document.getElementById("commencement-date");
+const stage1DeadlineEl = document.getElementById("stage1-deadline");
+const stage2DeadlineEl = document.getElementById("stage2-deadline");
+const stage3DeadlineEl = document.getElementById("stage3-deadline");
 const lohumShareEl = document.getElementById("lohum-share");
+const appliedAmountEl = document.getElementById("applied-amount");
 const remainingShareEl = document.getElementById("remaining-share");
 const statusListEl = document.getElementById("status-list");
 const pendingListEl = document.getElementById("pending-list");
@@ -60,9 +64,13 @@ function parseDeadline(value) {
   const raw = String(value).trim();
   if (!raw) return null;
 
-  const direct = new Date(raw);
-  if (!Number.isNaN(direct.getTime())) {
-    return direct;
+  const isoMatch = raw.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/);
+  if (isoMatch) {
+    const year = Number.parseInt(isoMatch[1], 10);
+    const month = Number.parseInt(isoMatch[2], 10) - 1;
+    const day = Number.parseInt(isoMatch[3], 10);
+    const date = new Date(year, month, day);
+    return Number.isNaN(date.getTime()) ? null : date;
   }
 
   const numericMatch = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})(?:[\/\-.](\d{2,4}))?$/);
@@ -109,6 +117,22 @@ function formatDeadline(date) {
     month: "short",
     year: "numeric",
   });
+}
+
+function getNextMilestone(milestones, today) {
+  if (!milestones.length) return null;
+  const nextIndex = milestones.findIndex((milestone) => milestone.date >= today);
+  if (nextIndex === -1) {
+    return { milestone: milestones[milestones.length - 1], index: milestones.length - 1 };
+  }
+  return { milestone: milestones[nextIndex], index: nextIndex };
+}
+
+function getSegmentProgress(today, start, end) {
+  if (!start || !end || end <= start) return 0;
+  if (today <= start) return 0;
+  if (today >= end) return 1;
+  return (today - start) / (end - start);
 }
 
 function computeDaysLeft(date) {
@@ -214,10 +238,14 @@ function drawPieChart(canvas, lohum, total) {
   return { lohumValue, remainingValue };
 }
 
-function applyDeadlineState(daysLeft) {
+function applyDaysLeftPill(daysLeft) {
   const className = getDeadlineClass(daysLeft);
   daysLeftPillEl.className = `days-pill ${className}`;
   daysLeftPillEl.textContent = formatDaysLeft(daysLeft);
+}
+
+function applyDaysLeftStat(daysLeft) {
+  const className = getDeadlineClass(daysLeft);
   daysLeftEl.className = `stat-value ${className}`;
   daysLeftEl.textContent = formatDaysLeft(daysLeft);
 }
@@ -230,23 +258,65 @@ function renderScheme(record) {
   const totalBudget = parseMoney(record["Government Budget (INR crores)"]);
   const lohumBudget = parseMoney(record["Lohum Incentive Size (INR crores)"]);
 
-  totalBudgetEl.textContent = `${formatCrores(totalBudget)} INR`;
-  lohumBudgetEl.textContent = `${formatCrores(lohumBudget)} INR`;
-
+  const commencementDate = parseDeadline(record["Commencement Date"]);
+  const stage1Deadline = parseDeadline(record["Stage 1 Deadline"]);
+  const stage2Deadline = parseDeadline(record["Stage 2 Deadline"]);
   const deadlineRaw = record["Timelines (by when)"];
-  const deadlineDate = parseDeadline(deadlineRaw);
-  deadlineTextEl.textContent = deadlineDate ? formatDeadline(deadlineDate) : deadlineRaw || "Unknown";
+  const finalDeadline = parseDeadline(record["Stage 3 Deadline"]) || parseDeadline(deadlineRaw);
+  const stage3Deadline = finalDeadline;
 
-  const explicitDays = Number.parseInt(record["Days left"], 10);
-  const derivedDays = deadlineDate ? computeDaysLeft(deadlineDate) : null;
-  const daysLeft = Number.isFinite(explicitDays) ? explicitDays : derivedDays;
-  applyDeadlineState(daysLeft);
+  commencementDateEl.textContent = commencementDate ? formatDeadline(commencementDate) : "Unknown";
+  stage1DeadlineEl.textContent = stage1Deadline ? formatDeadline(stage1Deadline) : "Unknown";
+  stage2DeadlineEl.textContent = stage2Deadline ? formatDeadline(stage2Deadline) : "Unknown";
+  stage3DeadlineEl.textContent = stage3Deadline ? formatDeadline(stage3Deadline) : "Unknown";
 
-  const progressRaw = record.Progress || "0%";
-  const progressValue = Number.parseFloat(String(progressRaw).replace(/[^0-9.]/g, ""));
-  const progressSafe = Number.isFinite(progressValue) ? Math.min(Math.max(progressValue, 0), 100) : 0;
-  progressLabelEl.textContent = `${progressSafe}%`;
-  progressFillEl.style.width = `${progressSafe}%`;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const milestones = [
+    { key: "commencement", label: "Commencement", date: commencementDate },
+    { key: "stage1", label: "Stage 1 deadline", date: stage1Deadline },
+    { key: "stage2", label: "Stage 2 deadline", date: stage2Deadline },
+    { key: "stage3", label: "Stage 3 deadline", date: stage3Deadline },
+  ].filter((milestone) => milestone.date);
+
+  const nextData = getNextMilestone(milestones, today);
+  const nextMilestone = nextData ? nextData.milestone : null;
+  const previousMilestone =
+    nextData && nextData.index > 0 ? milestones[nextData.index - 1] : milestones[0];
+
+  if (nextMilestone) {
+    progressLabelEl.textContent = `Next deadline: ${nextMilestone.label} · ${formatDeadline(
+      nextMilestone.date,
+    )}`;
+  } else {
+    progressLabelEl.textContent = "Next deadline: --";
+  }
+
+  const segmentProgress = nextMilestone
+    ? getSegmentProgress(today, previousMilestone?.date, nextMilestone.date)
+    : 0;
+  progressFillEl.style.width = `${Math.round(segmentProgress * 100)}%`;
+
+  if (timelineProgressEl) {
+    const timelineStart = milestones[0]?.date;
+    const timelineEnd = milestones[milestones.length - 1]?.date;
+    const overallProgress = timelineStart && timelineEnd
+      ? getSegmentProgress(today, timelineStart, timelineEnd)
+      : 0;
+    timelineProgressEl.style.width = `${Math.round(overallProgress * 100)}%`;
+  }
+
+  const nextDeadlineDate = nextMilestone?.date || finalDeadline;
+  deadlineTextEl.textContent = nextDeadlineDate
+    ? formatDeadline(nextDeadlineDate)
+    : deadlineRaw || "Unknown";
+
+  const nextDaysLeft = nextDeadlineDate ? computeDaysLeft(nextDeadlineDate) : null;
+  applyDaysLeftPill(nextDaysLeft);
+
+  const finalDaysLeft = finalDeadline ? computeDaysLeft(finalDeadline) : null;
+  applyDaysLeftStat(finalDaysLeft);
 
   stage1El.textContent = record["Stage 1"] ? `Stage 1: ${record["Stage 1"]}` : "Stage 1: -";
   stage2El.textContent = record["Stage 2"] ? `Stage 2: ${record["Stage 2"]}` : "Stage 2: -";
@@ -265,7 +335,8 @@ function renderScheme(record) {
   const { remainingValue } = drawPieChart(chartCanvas, lohumBudget, totalBudget);
   const sharePercent = totalBudget > 0 ? ((lohumBudget / totalBudget) * 100).toFixed(0) : "0";
   lohumShareEl.textContent = `${sharePercent}%`;
-  remainingShareEl.textContent = `${formatCrores(remainingValue)} INR`;
+  appliedAmountEl.textContent = `${formatCrores(lohumBudget)}`;
+  remainingShareEl.textContent = `${formatCrores(remainingValue)}`;
 }
 
 function renderNotFound() {

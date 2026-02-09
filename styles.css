@@ -237,7 +237,7 @@ a {
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 2.3fr 1.1fr 1.1fr 1fr 0.6fr;
+  grid-template-columns: 2.1fr 1.1fr 1.1fr 1fr 1fr;
   gap: 16px;
   align-items: center;
 }
@@ -312,6 +312,12 @@ a {
   font-size: 0.85rem;
   font-weight: 600;
   text-align: center;
+}
+
+.deadline-date {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 6px;
 }
 
 .deadline-urgent {
@@ -466,13 +472,16 @@ a {
 .progress-label {
   font-weight: 700;
   color: var(--accent);
+  font-size: 0.85rem;
 }
 
 .progress-bar {
-  background: #efe7dc;
+  background: rgba(15, 31, 27, 0.12);
   border-radius: 999px;
-  height: 14px;
+  height: 18px;
   overflow: hidden;
+  margin: 10px 0 16px;
+  box-shadow: inset 0 0 0 1px rgba(15, 31, 27, 0.08);
 }
 
 .progress-fill {
@@ -481,6 +490,84 @@ a {
   background: linear-gradient(90deg, var(--accent-cool), var(--accent));
   border-radius: 999px;
   transition: width 0.6s ease;
+  box-shadow: 0 6px 14px rgba(47, 123, 99, 0.25);
+}
+
+.timeline-wrapper {
+  position: relative;
+  padding-bottom: 28px;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: 10px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(15, 31, 27, 0.15);
+  overflow: hidden;
+}
+
+.timeline-line::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 2px, transparent 2.6px)
+    0 50% / 14px 100% repeat-x;
+  opacity: 0.6;
+}
+
+.timeline-line-progress {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  background: linear-gradient(90deg, rgba(47, 123, 99, 0.75), rgba(226, 138, 47, 0.85));
+  border-radius: 999px;
+}
+
+.timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-item {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 6px;
+  padding-bottom: 20px;
+}
+
+.timeline-date {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.timeline-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.timeline-stem {
+  width: 2px;
+  height: 22px;
+  background: rgba(15, 31, 27, 0.2);
+}
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f6f1ea;
+  border: 3px solid var(--accent-cool);
+  box-shadow: 0 6px 12px rgba(15, 31, 27, 0.18);
 }
 
 .deadline-row {
@@ -693,6 +780,14 @@ a {
   .details-grid {
     grid-template-columns: 1fr;
   }
+
+  .timeline-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .timeline-line {
+    display: none;
+  }
 }
 
 @media (max-width: 640px) {
@@ -712,5 +807,9 @@ a {
 
   .brand-logo {
     width: 120px;
+  }
+
+  .timeline-grid {
+    grid-template-columns: 1fr;
   }
 }

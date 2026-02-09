@@ -40,9 +40,13 @@ function parseDeadline(value) {
   const raw = String(value).trim();
   if (!raw) return null;
 
-  const direct = new Date(raw);
-  if (!Number.isNaN(direct.getTime())) {
-    return direct;
+  const isoMatch = raw.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/);
+  if (isoMatch) {
+    const year = Number.parseInt(isoMatch[1], 10);
+    const month = Number.parseInt(isoMatch[2], 10) - 1;
+    const day = Number.parseInt(isoMatch[3], 10);
+    const date = new Date(year, month, day);
+    return Number.isNaN(date.getTime()) ? null : date;
   }
 
   const numericMatch = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})(?:[\/\-.](\d{2,4}))?$/);
@@ -201,28 +205,48 @@ function buildRow(record, index) {
   const lohumCell = createCell("Lohum Incentive Size (INR crores)");
   lohumCell.textContent = formatCrores(lohumBudget);
 
+  const stage1Deadline = parseDeadline(record["Stage 1 Deadline"]);
+  const stage2Deadline = parseDeadline(record["Stage 2 Deadline"]);
+  const stage3Deadline = parseDeadline(record["Stage 3 Deadline"]);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const upcomingDeadlines = [stage1Deadline, stage2Deadline, stage3Deadline]
+    .filter((date) => date)
+    .sort((a, b) => a - b);
+  const nextDeadline = upcomingDeadlines.find((date) => date >= today);
+  const nextDeadlineCell = createCell("Next Deadline");
+  const nextDeadlineDate = nextDeadline ? formatDeadline(nextDeadline) : "Unknown";
+  const nextDaysLeft = nextDeadline ? computeDaysLeft(nextDeadline) : null;
+  const nextDateEl = document.createElement("div");
+  nextDateEl.className = "deadline-date";
+  nextDateEl.textContent = nextDeadlineDate;
+  const nextPill = document.createElement("div");
+  nextPill.className = `deadline-pill ${getDeadlineClass(nextDaysLeft)}`;
+  nextPill.textContent = formatDaysLeft(nextDaysLeft);
+  nextDeadlineCell.appendChild(nextDateEl);
+  nextDeadlineCell.appendChild(nextPill);
+
   const deadlineRaw = record["Timelines (by when)"];
-  const deadlineDate = parseDeadline(deadlineRaw);
-  const deadlineCell = createCell("Deadline");
-  deadlineCell.textContent = deadlineDate
-    ? formatDeadline(deadlineDate)
-    : deadlineRaw || "Unknown";
-
-  const explicitDays = Number.parseInt(record["Days left"], 10);
-  const derivedDays = deadlineDate ? computeDaysLeft(deadlineDate) : null;
-  const daysLeft = Number.isFinite(explicitDays) ? explicitDays : derivedDays;
-
-  const daysCell = createCell("Days left");
-  const pill = document.createElement("div");
-  pill.className = `deadline-pill ${getDeadlineClass(daysLeft)}`;
-  pill.textContent = formatDaysLeft(daysLeft);
-  daysCell.appendChild(pill);
+  const fallbackDeadline = parseDeadline(deadlineRaw);
+  const finalDeadline = stage3Deadline || fallbackDeadline;
+  const finalDeadlineCell = createCell("Final Deadline");
+  const finalDeadlineDate = finalDeadline ? formatDeadline(finalDeadline) : deadlineRaw || "Unknown";
+  const finalDaysLeft = finalDeadline ? computeDaysLeft(finalDeadline) : null;
+  const finalDateEl = document.createElement("div");
+  finalDateEl.className = "deadline-date";
+  finalDateEl.textContent = finalDeadlineDate;
+  const finalPill = document.createElement("div");
+  finalPill.className = `deadline-pill ${getDeadlineClass(finalDaysLeft)}`;
+  finalPill.textContent = formatDaysLeft(finalDaysLeft);
+  finalDeadlineCell.appendChild(finalDateEl);
+  finalDeadlineCell.appendChild(finalPill);
 
   row.appendChild(schemeCell);
   row.appendChild(totalCell);
   row.appendChild(lohumCell);
-  row.appendChild(deadlineCell);
-  row.appendChild(daysCell);
+  row.appendChild(nextDeadlineCell);
+  row.appendChild(finalDeadlineCell);
 
   const details = document.createElement("div");
   details.className = "row-details";

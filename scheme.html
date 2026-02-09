@@ -19,14 +19,6 @@
       </div>
       <div class="stat-grid">
         <div class="stat-card">
-          <div class="stat-label">Total budget</div>
-          <div id="total-budget" class="stat-value">--</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Lohum applied</div>
-          <div id="lohum-budget" class="stat-value">--</div>
-        </div>
-        <div class="stat-card">
           <div class="stat-label">Days left</div>
           <div id="days-left" class="stat-value">--</div>
         </div>
@@ -41,7 +33,7 @@
             <span class="legend-dot legend-lohum"></span>
             <span>Lohum share</span>
             <span class="legend-dot legend-remaining"></span>
-            <span>Remaining</span>
+            <span>Remaining share</span>
           </div>
         </div>
         <div class="chart-body">
@@ -52,7 +44,11 @@
               <strong id="lohum-share">--</strong>
             </div>
             <div>
-              <span>Remaining</span>
+              <span>Applied amount (In Crores)</span>
+              <strong id="applied-amount">--</strong>
+            </div>
+            <div>
+              <span>Remaining (In Crores)</span>
               <strong id="remaining-share">--</strong>
             </div>
           </div>
@@ -61,15 +57,46 @@
 
       <section class="progress-card">
         <div class="card-head">
-          <h2>Progress</h2>
-          <span id="progress-label" class="progress-label">0%</span>
+          <h2>Timeline</h2>
+          <span id="progress-label" class="progress-label">Next deadline: --</span>
+        </div>
+        <div class="timeline-wrapper">
+          <div class="timeline-line">
+            <div id="timeline-progress" class="timeline-line-progress"></div>
+          </div>
+          <div class="timeline-grid">
+            <div class="timeline-item">
+              <div id="commencement-date" class="timeline-date">--</div>
+              <div class="timeline-title">Commencement</div>
+              <span class="timeline-stem"></span>
+              <span class="timeline-dot"></span>
+            </div>
+            <div class="timeline-item">
+              <div id="stage1-deadline" class="timeline-date">--</div>
+              <div class="timeline-title">Stage 1 deadline</div>
+              <span class="timeline-stem"></span>
+              <span class="timeline-dot"></span>
+            </div>
+            <div class="timeline-item">
+              <div id="stage2-deadline" class="timeline-date">--</div>
+              <div class="timeline-title">Stage 2 deadline</div>
+              <span class="timeline-stem"></span>
+              <span class="timeline-dot"></span>
+            </div>
+            <div class="timeline-item">
+              <div id="stage3-deadline" class="timeline-date">--</div>
+              <div class="timeline-title">Stage 3 deadline</div>
+              <span class="timeline-stem"></span>
+              <span class="timeline-dot"></span>
+            </div>
+          </div>
         </div>
         <div class="progress-bar">
           <div id="progress-fill" class="progress-fill"></div>
         </div>
         <div class="deadline-row">
           <div>
-            <div class="meta-label">Deadline</div>
+            <div class="meta-label">Next deadline</div>
             <div id="deadline-text" class="meta-value">--</div>
           </div>
           <div id="days-left-pill" class="days-pill">--</div>
@@ -87,15 +114,15 @@
 
       <section class="task-board">
         <div class="task-col">
-          <h3>Pending</h3>
+          <h3>Pending tasks</h3>
           <ul id="pending-list"></ul>
         </div>
         <div class="task-col">
-          <h3>Ongoing</h3>
+          <h3>Ongoing tasks</h3>
           <ul id="ongoing-list"></ul>
         </div>
         <div class="task-col">
-          <h3>Completed</h3>
+          <h3>Completed tasks</h3>
           <ul id="completed-list"></ul>
         </div>
       </section>
