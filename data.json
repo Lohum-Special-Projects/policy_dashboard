@@ -7,6 +7,7 @@
       "Progress": "33%",
       "Scheme": "NCMM Recycling Scheme 2025",
       "Timelines (by when)": "27/02/2026",
+      "Ministry": "Ministry of Mines",
       "Commencement Date": "01/01/2026",
       "Lohum Incentive Size (INR crores)": "\u20b950.00",
       "Stage 1 Deadline": "12/01/2026",
@@ -28,6 +29,7 @@
       "Progress": "45%",
       "Scheme": "Electronics Component Manufacturing Scheme - REE",
       "Timelines (by when)": "28/02/2026",
+      "Ministry": "UP Government",
       "Commencement Date": "02/01/2026",
       "Lohum Incentive Size (INR crores)": "\u20b9175.00",
       "Stage 1 Deadline": "13/01/2026",
@@ -49,6 +51,7 @@
       "Progress": "25%",
       "Scheme": "UP FCI",
       "Timelines (by when)": "01/03/2026",
+      "Ministry": "Department of Science and Technology",
       "Commencement Date": "03/01/2026",
       "Lohum Incentive Size (INR crores)": "\u20b9300.00",
       "Stage 1 Deadline": "14/01/2026",
@@ -70,6 +73,7 @@
       "Progress": "60%",
       "Scheme": "UP Center of Excellence",
       "Timelines (by when)": "02/03/2026",
+      "Ministry": "Ministry of Heavy Industries",
       "Commencement Date": "04/01/2026",
       "Lohum Incentive Size (INR crores)": "\u20b9425.00",
       "Stage 1 Deadline": "15/01/2026",
@@ -91,6 +95,7 @@
       "Progress": "20%",
       "Scheme": "RDIF - TDB",
       "Timelines (by when)": "03/03/2026",
+      "Ministry": "Ministry of Electronics and IT",
       "Commencement Date": "05/01/2026",
       "Lohum Incentive Size (INR crores)": "\u20b9520.00",
       "Stage 1 Deadline": "16/01/2026",
@@ -111,5 +116,5 @@
   "records_start_index": 1,
   "records_end_index": 5,
   "status": "success",
-  "last_modified": "2026-02-10T04:59:15.609518+00:00"
+  "last_modified": "2026-02-10T06:12:43.798463+00:00"
 }
