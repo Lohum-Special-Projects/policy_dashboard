@@ -19,6 +19,8 @@ const stage1El = document.getElementById("stage-1");
 const stage2El = document.getElementById("stage-2");
 const stage3El = document.getElementById("stage-3");
 const chartCanvas = document.getElementById("budget-chart");
+const ministryLogoCardEl = document.getElementById("ministry-logo-card");
+const ministryLogoEl = document.getElementById("ministry-logo");
 
 const monthMap = {
   jan: 0,
@@ -36,6 +38,15 @@ const monthMap = {
 };
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const MINISTRY_LOGOS = {
+  "Ministry of Mines": "image/Ministry of Mines.svg",
+  "Ministry of Electronics and IT": "image/Ministry of Electronics and IT.svg",
+  "Ministry of Heavy Industries": "image/Ministry of Heavy Industries.svg",
+  "Department of Science and Technology": "image/Department of Science and Technology.svg",
+  "UP Government": "image/UP Government.svg",
+  "Gujarat Government": "image/Gujarat Government.svg",
+  "Telangana Government": "image/Telangana Government.png",
+};
 
 function getDataUrl() {
   const url = new URL("data.json", window.location.href);
@@ -167,6 +178,28 @@ function parseList(value) {
     .map((item) => item.replace(/^\d+\.\s*/, ""));
 }
 
+function normalizeMinistry(value) {
+  if (!value) return "";
+  return String(value).trim().replace(/\s+/g, " ");
+}
+
+function applyMinistryLogo(ministryName) {
+  if (!ministryLogoCardEl || !ministryLogoEl) return;
+
+  const normalizedMinistry = normalizeMinistry(ministryName);
+  const logoPath = MINISTRY_LOGOS[normalizedMinistry];
+  if (!logoPath) {
+    ministryLogoEl.removeAttribute("src");
+    ministryLogoEl.alt = "";
+    ministryLogoCardEl.hidden = true;
+    return;
+  }
+
+  ministryLogoEl.src = new URL(logoPath, window.location.href).toString();
+  ministryLogoEl.alt = `${normalizedMinistry} logo`;
+  ministryLogoCardEl.hidden = false;
+}
+
 function renderList(listEl, items) {
   listEl.innerHTML = "";
   if (!items.length) {
@@ -253,6 +286,7 @@ function renderScheme(record) {
   const schemeName = record.Scheme || "Untitled scheme";
   schemeTitleEl.textContent = schemeName;
   document.title = `${schemeName} | Scheme detail`;
+  applyMinistryLogo(record.Ministry);
 
   const totalBudget = parseMoney(record["Government Budget (INR crores)"]);
   const lohumBudget = parseMoney(record["Lohum Incentive Size (INR crores)"]);

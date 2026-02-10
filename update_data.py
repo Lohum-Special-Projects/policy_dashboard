@@ -6,6 +6,30 @@ import requests
 from dotenv import load_dotenv
 
 
+KNOWN_MINISTRIES = (
+    "Ministry of Mines",
+    "Ministry of Electronics and IT",
+    "Ministry of Heavy Industries",
+    "Department of Science and Technology",
+    "UP Government",
+    "Gujarat Government",
+    "Telangana Government",
+)
+
+
+def normalize_ministry(value: object) -> str:
+    if value is None:
+        return ""
+
+    raw = str(value).strip()
+    if not raw:
+        return ""
+
+    collapsed = " ".join(raw.split())
+    ministry_lookup = {name.lower(): name for name in KNOWN_MINISTRIES}
+    return ministry_lookup.get(collapsed.lower(), collapsed)
+
+
 def require_env(name: str) -> str:
     value = os.getenv(name)
     if not value:
@@ -73,6 +97,11 @@ def normalize_records(payload: dict) -> dict:
     for record in records:
         if not isinstance(record, dict):
             continue
+
+        if not record.get("Ministry") and record.get("Ministry / Department"):
+            record["Ministry"] = record.get("Ministry / Department")
+        record["Ministry"] = normalize_ministry(record.get("Ministry"))
+
         for field in new_fields:
             record.setdefault(field, "")
         if not record.get("Timelines (by when)") and record.get("Stage 3 Deadline"):
