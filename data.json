@@ -29,7 +29,7 @@
       "Progress": "45%",
       "Scheme": "Electronics Component Manufacturing Scheme - REE",
       "Timelines (by when)": "28/02/2026",
-      "Ministry": "UP Government",
+      "Ministry": "Ministry of Electronics and IT",
       "Commencement Date": "02/01/2026",
       "Lohum Incentive Size (INR crores)": "\u20b9175.00",
       "Stage 1 Deadline": "13/01/2026",
@@ -51,7 +51,7 @@
       "Progress": "25%",
       "Scheme": "UP FCI",
       "Timelines (by when)": "01/03/2026",
-      "Ministry": "Department of Science and Technology",
+      "Ministry": "UP Government",
       "Commencement Date": "03/01/2026",
       "Lohum Incentive Size (INR crores)": "\u20b9300.00",
       "Stage 1 Deadline": "14/01/2026",
@@ -116,5 +116,5 @@
   "records_start_index": 1,
   "records_end_index": 5,
   "status": "success",
-  "last_modified": "2026-02-10T11:45:01.466420+00:00"
+  "last_modified": "2026-02-10T12:58:04.009218+00:00"
 }
