@@ -376,6 +376,11 @@ a {
   color: rgba(242, 246, 241, 0.7);
 }
 
+.scheme-description {
+  margin-top: 10px;
+  max-width: 760px;
+}
+
 .stat-grid {
   display: grid;
   gap: 14px;

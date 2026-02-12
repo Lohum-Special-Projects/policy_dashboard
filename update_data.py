@@ -77,17 +77,23 @@ def get_sheet_data(sheet_id: str, access_token: str) -> dict:
 
 
 def normalize_records(payload: dict) -> dict:
+    data_block = payload.get("data") if isinstance(payload.get("data"), dict) else None
     records = payload.get("records")
-    if records is None and isinstance(payload.get("data"), dict):
-        records = payload["data"].get("records")
+    if records is None and data_block is not None:
+        records = data_block.get("records")
     if records is None:
         records = []
     if not isinstance(records, list):
         raise RuntimeError("Unexpected records payload from Zoho API")
 
     payload["records"] = records
+    if data_block is not None:
+        for field in ("records_count", "records_start_index", "records_end_index"):
+            if field not in payload and field in data_block:
+                payload[field] = data_block[field]
 
     new_fields = [
+        "Description",
         "Commencement Date",
         "Stage 1 Deadline",
         "Stage 2 Deadline",
@@ -102,6 +108,9 @@ def normalize_records(payload: dict) -> dict:
             record["Ministry"] = record.get("Ministry / Department")
         record["Ministry"] = normalize_ministry(record.get("Ministry"))
 
+        if not record.get("Description") and record.get("Scheme Description"):
+            record["Description"] = record.get("Scheme Description")
+
         for field in new_fields:
             record.setdefault(field, "")
         if not record.get("Timelines (by when)") and record.get("Stage 3 Deadline"):
@@ -109,6 +118,10 @@ def normalize_records(payload: dict) -> dict:
 
     if "records_count" not in payload:
         payload["records_count"] = len(records)
+    if "records_start_index" not in payload:
+        payload["records_start_index"] = 1 if records else 0
+    if "records_end_index" not in payload:
+        payload["records_end_index"] = payload["records_start_index"] + len(records) - 1 if records else 0
 
     return payload
 

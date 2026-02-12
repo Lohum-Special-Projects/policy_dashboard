@@ -1,4 +1,5 @@
 const schemeTitleEl = document.getElementById("scheme-title");
+const schemeDescriptionEl = document.getElementById("scheme-description");
 const daysLeftEl = document.getElementById("days-left");
 const deadlineTextEl = document.getElementById("deadline-text");
 const daysLeftPillEl = document.getElementById("days-left-pill");
@@ -285,6 +286,16 @@ function applyDaysLeftStat(daysLeft) {
 function renderScheme(record) {
   const schemeName = record.Scheme || "Untitled scheme";
   schemeTitleEl.textContent = schemeName;
+  const description = String(record.Description || "").trim();
+  if (schemeDescriptionEl) {
+    if (description) {
+      schemeDescriptionEl.textContent = description;
+      schemeDescriptionEl.hidden = false;
+    } else {
+      schemeDescriptionEl.textContent = "";
+      schemeDescriptionEl.hidden = true;
+    }
+  }
   document.title = `${schemeName} | Scheme detail`;
   applyMinistryLogo(record.Ministry);
 
@@ -366,6 +377,10 @@ function renderScheme(record) {
 
 function renderNotFound() {
   schemeTitleEl.textContent = "Scheme not found";
+  if (schemeDescriptionEl) {
+    schemeDescriptionEl.textContent = "";
+    schemeDescriptionEl.hidden = true;
+  }
   statusListEl.innerHTML = "";
   const li = document.createElement("li");
   li.className = "empty";
