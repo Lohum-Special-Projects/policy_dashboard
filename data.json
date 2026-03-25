@@ -76,7 +76,7 @@
       "Progress": "",
       "Scheme": "RDIF - TDB",
       "Description": "The Research, Development and Innovation Fund (RDIF) is a flagship DST initiative with a total outlay of \u20b91 lakh crore over 6 years, aimed at catalysing private sector investment in R&D and innovation. \n\nThe Technology Development Board (TDB) acts as a Second Level Fund Manager (SLFM) under the scheme, disbursing funds to eligible Indian-registered entities working on technologies at TRL 4+. Funding is structured as long-tenure, collateral-free loans at 3\u20134% interest over 15 years, covering up to 50% of assessed project cost. ",
-      "Timelines (by when)": "15/04/2026",
+      "Timelines (by when)": "31/03/2026",
       "Ministry": "Department of Science and Technology",
       "Commencement Date": "05/02/2026",
       "Lohum Incentive Size (INR crores)": "\u20b9300.00",
@@ -215,7 +215,7 @@
       "Scheme": "Processing of Critical Minerals - Nickel and Lithium ",
       "Description": "",
       "Timelines (by when)": "",
-      "Ministry": "",
+      "Ministry": "Ministry of Mines",
       "Commencement Date": "",
       "Lohum Incentive Size (INR crores)": "",
       "Stage 1 Deadline": "",
@@ -236,5 +236,5 @@
   "records_start_index": 1,
   "records_end_index": 10,
   "status": "success",
-  "last_modified": "2026-03-25T11:36:53.693777+00:00"
+  "last_modified": "2026-03-25T12:54:08.551274+00:00"
 }
