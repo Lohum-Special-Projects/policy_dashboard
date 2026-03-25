@@ -2,6 +2,23 @@ const listEl = document.getElementById("scheme-list");
 const lastUpdatedEl = document.getElementById("last-updated");
 const schemeCountEl = document.getElementById("scheme-count");
 const totalIncentiveEl = document.getElementById("total-incentive");
+const fontSizeIncreaseBtn = document.getElementById("font-size-increase");
+const fontSizeDecreaseBtn = document.getElementById("font-size-decrease");
+const tableCard = document.querySelector(".table-card");
+
+const DEFAULT_REFRESH_MS = 600 * 1000;
+let lastRenderedModified = null;
+
+const FONT_SIZES = [
+  "font-size-xs",
+  "font-size-sm",
+  "font-size-base",
+  "font-size-md",
+  "font-size-lg",
+  "font-size-xl",
+  "font-size-xxl",
+];
+let currentFontSizeIndex = 2;
 
 const monthMap = {
   jan: 0,
@@ -49,12 +66,17 @@ function parseDeadline(value) {
     return Number.isNaN(date.getTime()) ? null : date;
   }
 
-  const numericMatch = raw.match(/^(\d{1,2})[\/\-.](\d{1,2})(?:[\/\-.](\d{2,4}))?$/);
+  const numericMatch = raw.match(
+    /^(\d{1,2})[\/\-.](\d{1,2})(?:[\/\-.](\d{2,4}))?$/,
+  );
   if (numericMatch) {
     const day = Number.parseInt(numericMatch[1], 10);
     const month = Number.parseInt(numericMatch[2], 10) - 1;
     if (month >= 0 && month <= 11) {
-      let year = numericMatch[3] ? Number.parseInt(numericMatch[3], 10) : new Date().getFullYear();
+      let year =
+        numericMatch[3] ?
+          Number.parseInt(numericMatch[3], 10)
+        : new Date().getFullYear();
       if (year < 100) year += 2000;
       let date = new Date(year, month, day);
       const today = new Date();
@@ -77,9 +99,8 @@ function parseDeadline(value) {
   const month = monthMap[monthKey];
   if (month === undefined) return null;
 
-  let year = match[3]
-    ? Number.parseInt(match[3], 10)
-    : new Date().getFullYear();
+  let year =
+    match[3] ? Number.parseInt(match[3], 10) : new Date().getFullYear();
   if (year < 100) year += 2000;
 
   let date = new Date(year, month, day);
@@ -134,6 +155,13 @@ function parseList(value) {
     .map((item) => item.replace(/^\d+\.\s*/, ""));
 }
 
+function toStatusSummary(statusValue) {
+  const lines = parseList(statusValue);
+  if (!lines.length) return "--";
+  if (lines.length === 1) return lines[0];
+  return `${lines[0]} (+${lines.length - 1})`;
+}
+
 function renderDetailList(listEl, items, emptyText) {
   listEl.innerHTML = "";
   if (!items.length) {
@@ -176,13 +204,15 @@ function buildRow(record, index) {
   link.href = `scheme.html?row=${encodeURIComponent(rowId)}`;
   schemeCell.appendChild(link);
 
+  const iconCell = createCell("", "icon-cell");
   const toggleBtn = document.createElement("button");
   toggleBtn.type = "button";
-  toggleBtn.className = "row-toggle";
-  toggleBtn.textContent = "View pending details";
+  toggleBtn.className = "row-toggle row-toggle-icon";
+  toggleBtn.innerHTML =
+    '<span class="row-toggle-eye" aria-hidden="true">\u{1F441}</span><span class="sr-only">View details</span>';
   toggleBtn.setAttribute("aria-expanded", "false");
   toggleBtn.setAttribute("aria-controls", detailsId);
-  schemeCell.appendChild(toggleBtn);
+  iconCell.appendChild(toggleBtn);
 
   const totalBudget = parseMoney(record["Government Budget (INR crores)"]);
   const lohumBudget = parseMoney(record["Lohum Incentive Size (INR crores)"]);
@@ -204,7 +234,8 @@ function buildRow(record, index) {
     .sort((a, b) => a - b);
   const nextDeadline = upcomingDeadlines.find((date) => date >= today);
   const nextDeadlineCell = createCell("Next Deadline");
-  const nextDeadlineDate = nextDeadline ? formatDeadline(nextDeadline) : "Unknown";
+  const nextDeadlineDate =
+    nextDeadline ? formatDeadline(nextDeadline) : "Unknown";
   const nextDaysLeft = nextDeadline ? computeDaysLeft(nextDeadline) : null;
   const nextDateEl = document.createElement("div");
   nextDateEl.className = "deadline-date";
@@ -215,26 +246,15 @@ function buildRow(record, index) {
   nextDeadlineCell.appendChild(nextDateEl);
   nextDeadlineCell.appendChild(nextPill);
 
-  const deadlineRaw = record["Timelines (by when)"];
-  const fallbackDeadline = parseDeadline(deadlineRaw);
-  const finalDeadline = stage3Deadline || fallbackDeadline;
-  const finalDeadlineCell = createCell("Final Deadline");
-  const finalDeadlineDate = finalDeadline ? formatDeadline(finalDeadline) : deadlineRaw || "Unknown";
-  const finalDaysLeft = finalDeadline ? computeDaysLeft(finalDeadline) : null;
-  const finalDateEl = document.createElement("div");
-  finalDateEl.className = "deadline-date";
-  finalDateEl.textContent = finalDeadlineDate;
-  const finalPill = document.createElement("div");
-  finalPill.className = `deadline-pill ${getDeadlineClass(finalDaysLeft)}`;
-  finalPill.textContent = formatDaysLeft(finalDaysLeft);
-  finalDeadlineCell.appendChild(finalDateEl);
-  finalDeadlineCell.appendChild(finalPill);
+  const statusCell = createCell("Status");
+  statusCell.textContent = toStatusSummary(record.Status);
 
   row.appendChild(schemeCell);
+  row.appendChild(iconCell);
   row.appendChild(totalCell);
   row.appendChild(lohumCell);
   row.appendChild(nextDeadlineCell);
-  row.appendChild(finalDeadlineCell);
+  row.appendChild(statusCell);
 
   const details = document.createElement("div");
   details.className = "row-details";
@@ -250,7 +270,11 @@ function buildRow(record, index) {
   pendingLabel.textContent = "Pending deliverables";
   const pendingList = document.createElement("ul");
   pendingList.className = "details-list";
-  renderDetailList(pendingList, parseList(record["Pending deliverables"]), "None");
+  renderDetailList(
+    pendingList,
+    parseList(record["Pending deliverables"]),
+    "None",
+  );
   pendingBlock.appendChild(pendingLabel);
   pendingBlock.appendChild(pendingList);
 
@@ -261,10 +285,7 @@ function buildRow(record, index) {
   const statusList = document.createElement("ul");
   statusList.className = "details-list";
   const statusLines = parseList(record.Status);
-  const pendingWhere =
-    statusLines.length
-      ? statusLines
-      : [];
+  const pendingWhere = statusLines.length ? statusLines : [];
   renderDetailList(statusList, pendingWhere, "Not specified");
   statusBlock.appendChild(statusLabel);
   statusBlock.appendChild(statusList);
@@ -277,7 +298,7 @@ function buildRow(record, index) {
     const isOpen = !details.hidden;
     details.hidden = isOpen;
     toggleBtn.setAttribute("aria-expanded", String(!isOpen));
-    toggleBtn.textContent = isOpen ? "View pending details" : "Hide pending details";
+    toggleBtn.classList.toggle("is-open", !isOpen);
   });
 
   entry.appendChild(row);
@@ -292,10 +313,12 @@ function renderDashboard(data) {
   const records = Array.isArray(data.records) ? data.records : [];
   schemeCountEl.textContent = records.length ? String(records.length) : "0";
   const totalIncentive = records.reduce(
-    (sum, record) => sum + parseMoney(record["Lohum Incentive Size (INR crores)"]),
+    (sum, record) =>
+      sum + parseMoney(record["Lohum Incentive Size (INR crores)"]),
     0,
   );
-  totalIncentiveEl.textContent = records.length ? formatCrores(totalIncentive) : "0";
+  totalIncentiveEl.textContent =
+    records.length ? formatCrores(totalIncentive) : "0";
 
   const lastUpdated = data.last_modified ? new Date(data.last_modified) : null;
   if (lastUpdated && !Number.isNaN(lastUpdated.getTime())) {
@@ -320,23 +343,72 @@ function renderDashboard(data) {
   });
 }
 
-fetch("data.json", { cache: "no-store" })
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error(`Failed to load data.json: ${response.status}`);
+function loadDataAndRender({ force } = { force: false }) {
+  return fetch("data.json", { cache: "no-store" })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Failed to load data.json: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const modified = data.last_modified ?? null;
+      if (!force && modified && lastRenderedModified === modified) {
+        return;
+      }
+      lastRenderedModified = modified;
+      renderDashboard(data);
+    })
+    .catch((error) => {
+      listEl.innerHTML = "";
+      const errorRow = document.createElement("div");
+      errorRow.className = "table-row loading";
+      errorRow.textContent =
+        "Unable to load data.json. Check that the file is available.";
+      listEl.appendChild(errorRow);
+      lastUpdatedEl.textContent = "Unavailable";
+      schemeCountEl.textContent = "0";
+      totalIncentiveEl.textContent = "0";
+      console.error(error);
+    });
+}
+
+function initFontSizeToggle() {
+  const savedFontSize = localStorage.getItem("tableFontSize");
+  if (savedFontSize && FONT_SIZES.includes(savedFontSize)) {
+    currentFontSizeIndex = FONT_SIZES.indexOf(savedFontSize);
+  }
+  applyFontSize();
+
+  fontSizeIncreaseBtn.addEventListener("click", () => {
+    if (currentFontSizeIndex < FONT_SIZES.length - 1) {
+      currentFontSizeIndex++;
+      applyFontSize();
     }
-    return response.json();
-  })
-  .then(renderDashboard)
-  .catch((error) => {
-    listEl.innerHTML = "";
-    const errorRow = document.createElement("div");
-    errorRow.className = "table-row loading";
-    errorRow.textContent =
-      "Unable to load data.json. Check that the file is available.";
-    listEl.appendChild(errorRow);
-    lastUpdatedEl.textContent = "Unavailable";
-    schemeCountEl.textContent = "0";
-    totalIncentiveEl.textContent = "0";
-    console.error(error);
   });
+
+  fontSizeDecreaseBtn.addEventListener("click", () => {
+    if (currentFontSizeIndex > 0) {
+      currentFontSizeIndex--;
+      applyFontSize();
+    }
+  });
+}
+
+function applyFontSize() {
+  FONT_SIZES.forEach((size) => tableCard.classList.remove(size));
+  const newSize = FONT_SIZES[currentFontSizeIndex];
+  if (newSize !== "font-size-base") {
+    tableCard.classList.add(newSize);
+  }
+  localStorage.setItem("tableFontSize", newSize);
+
+  fontSizeDecreaseBtn.disabled = currentFontSizeIndex === 0;
+  fontSizeIncreaseBtn.disabled = currentFontSizeIndex === FONT_SIZES.length - 1;
+}
+
+initFontSizeToggle();
+loadDataAndRender({ force: true });
+window.setInterval(() => {
+  loadDataAndRender();
+}, DEFAULT_REFRESH_MS);
