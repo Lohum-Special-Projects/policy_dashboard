@@ -20,18 +20,40 @@
           Track application status across active government schemes
         </p>
       </div>
-      <div class="meta-chip">
-        <span class="meta-label">Last updated</span>
-        <span id="last-updated" class="meta-value">--</span>
-      </div>
-      <div class="hero-meta">
-        <div class="meta-card">
-          <div class="meta-label">Number of Applicable Schemes</div>
-          <div id="scheme-count" class="meta-value">--</div>
+      <div class="hero-right">
+        <div class="header-controls">
+          <div class="font-size-toggle-compact">
+            <button
+              type="button"
+              id="font-size-decrease"
+              class="font-btn-compact"
+              aria-label="Decrease font size"
+            >
+              A-
+            </button>
+            <button
+              type="button"
+              id="font-size-increase"
+              class="font-btn-compact"
+              aria-label="Increase font size"
+            >
+              A+
+            </button>
+          </div>
+          <div class="meta-chip">
+            <span class="meta-label">Last updated</span>
+            <span id="last-updated" class="meta-value">--</span>
+          </div>
         </div>
-        <div class="meta-card">
-          <div class="meta-label">Total Incentive Pool (INR crores)</div>
-          <div id="total-incentive" class="meta-value">--</div>
+        <div class="metrics-inline">
+          <div class="metric-card">
+            <div id="scheme-count" class="metric-number">--</div>
+            <div class="metric-text">Applicable Schemes</div>
+          </div>
+          <div class="metric-card">
+            <div id="total-incentive" class="metric-number">--</div>
+            <div class="metric-text">Crore (Rs)<br />Incentive Pool</div>
+          </div>
         </div>
       </div>
     </header>
@@ -40,10 +62,17 @@
       <section class="table-card">
         <div class="table-header">
           <div>Scheme</div>
-          <div>Government Budget (INR crores)</div>
-          <div>Lohum Incentive Size (INR crores)</div>
+          <div class="header-icon-col"></div>
+          <div>
+            Government Budget<br /><span class="header-unit">(INR crores)</span>
+          </div>
+          <div>
+            Lohum Incentive Size<br /><span class="header-unit"
+              >(INR crores)</span
+            >
+          </div>
           <div>Next Deadline</div>
-          <div>Final Deadline</div>
+          <div>Status</div>
         </div>
         <div id="scheme-list" class="table-body">
           <div class="table-row loading">Loading data...</div>
