@@ -1,8 +1,6 @@
 name: Update dashboard data
 
 on:
-  schedule:
-    - cron: "10,20,30,40,50,59 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -35,5 +33,4 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add data.json
-          git commit -m "Auto update data" || exit 0
-          git push
+          git commit -m "Auto update data" && git push
